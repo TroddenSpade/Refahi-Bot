@@ -26,11 +26,10 @@ const createUser = function(data, sb, fb) {
   });
 };
 
-const checkUser = function(telId, sb, fb) {
-  User.exists({ telId }, res => {
-    if (res) sb();
-    else fb();
-  });
+const checkUser = async function(telId, sb, fb) {
+  let ex = await User.exists({ telId:telId });
+  if (!ex) sb();
+  else fb();
 };
 
 module.exports = {

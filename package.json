@@ -1,0 +1,22 @@
+{
+  "name": "refahi_bot",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/3pic/Refahi_Bot.git"
+  },
+  "author": "3pic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/3pic/Refahi_Bot/issues"
+  },
+  "homepage": "https://github.com/3pic/Refahi_Bot#readme",
+  "description": "",
+  "dependencies": {
+    "telegraf": "^3.33.3"
+  }
+}

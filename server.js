@@ -93,7 +93,10 @@ bot.action("STOP", ctx => ctx.editMessageText("it doesn't work now but, okey"));
 bot.launch();
 
 reserve((chatId, message) => {
-  bot.telegram.sendMessage(chatId, message).then(res => console.log(res));
+  bot.telegram
+    .sendMessage(chatId, message)
+    .then(res => {})
+    .catch(err => {});
 });
 
 // const job = new CronJob(

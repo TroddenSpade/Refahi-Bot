@@ -24,13 +24,19 @@ const superWizard = new WizardScene(
   },
   async ctx => {
     ctx.wizard.state.pass = ctx.message.text;
-    let res = await createUser({
-      stuId: tx.wizard.state.user,
-      pass: tx.wizard.state.pass,
+    await createUser({
+      stuId: ctx.wizard.state.user,
+      pass: ctx.wizard.state.pass,
       telId: ctx.from.id
+    },
+    (doc)=>{
+	ctx.reply(`Saved id:${doc._id}`);
+    },
+    (res)=>{
+	ctx.reply(`Error : ${res.err}`);
+	ctx.reply(`Need Help ? contact us:  @troddenspade`);
     });
-    console.log(res);
-    ctx.reply("Done");
+
     return ctx.wizard.next();
   }
 );

@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const config = require("./src/config/config").get();
+const config = require("./config/config").get();
 
-const { User } = require("./src/models/User");
+const { User } = require("./models/User");
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.DATABASE, {
@@ -10,22 +9,24 @@ mongoose.connect(config.DATABASE, {
   useCreateIndex: true
 });
 
-function createUser(data) {
+const createUser = function(data,sb,fb) {
   const user = new User(data);
+
   user.save((err, doc) => {
     if (err) {
-      return {
+       fb({
         signup: false,
         err: err
-      };
+      })
+    }else{
+      sb({
+        signup: true,
+        user: doc
+      });
     }
-    return {
-      signup: true,
-      user: doc
-    };
   });
 }
 
-exports.module = {
+module.exports = {
   createUser
 };

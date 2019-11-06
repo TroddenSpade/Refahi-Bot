@@ -1,10 +1,12 @@
+const CronJob = require("cron").CronJob;
+
 const Telegraf = require("telegraf");
 const Markup = require("telegraf/markup");
 const Stage = require("telegraf/stage");
 const session = require("telegraf/session");
 const WizardScene = require("telegraf/scenes/wizard");
 
-const { createUser, checkUser } = require("./src/database");
+const { createUser, checkUser, reserve } = require("./src/database");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -28,7 +30,8 @@ const superWizard = new WizardScene(
       {
         stuId: ctx.wizard.state.user,
         pass: ctx.wizard.state.pass,
-        telId: ctx.from.id
+        telId: ctx.from.id,
+        chatId: ctx.chat.id
       },
       doc => {
         ctx.reply(`Saved id:${doc._id}`);
@@ -88,3 +91,16 @@ bot.action("SIGN_IN", async ctx => {
 bot.action("STOP", ctx => ctx.editMessageText("it doesn't work now but, okey"));
 
 bot.launch();
+
+reserve((chatId, message) => {
+  bot.telegram.sendMessage(chatId, message).then(res => console.log(res));
+});
+
+// const job = new CronJob(
+//   "03 19 * * 3",
+//   function() {},
+//   null,
+//   true,
+//   "Asia/Tehran"
+// );
+// job.start();

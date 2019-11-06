@@ -17,6 +17,7 @@
   "homepage": "https://github.com/3pic/Refahi_Bot#readme",
   "description": "",
   "dependencies": {
+    "cron": "^1.7.2",
     "dotenv": "^8.2.0",
     "mongoose": "^5.7.8",
     "telegraf": "^3.33.3"

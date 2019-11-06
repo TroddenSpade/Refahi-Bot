@@ -92,18 +92,18 @@ bot.action("STOP", ctx => ctx.editMessageText("it doesn't work now but, okey"));
 
 bot.launch();
 
-reserve((chatId, message) => {
-  bot.telegram
-    .sendMessage(chatId, message)
-    .then(res => {})
-    .catch(err => {});
-});
-
-// const job = new CronJob(
-//   "03 19 * * 3",
-//   function() {},
-//   null,
-//   true,
-//   "Asia/Tehran"
-// );
-// job.start();
+const job = new CronJob(
+  "40 20 * * 3",
+  function() {
+    reserve((chatId, message) => {
+      bot.telegram
+        .sendMessage(chatId, "Reserve Status :  " + message)
+        .then(res => {})
+        .catch(err => {});
+    });
+  },
+  null,
+  true,
+  "Asia/Tehran"
+);
+job.start();

@@ -27,12 +27,21 @@ const createUser = function(data, sb, fb) {
 };
 
 const checkUser = async function(telId, sb, fb) {
-  let ex = await User.exists({ telId:telId });
+  let ex = await User.exists({ telId: telId });
   if (!ex) sb();
   else fb();
 };
 
+const reserve = function(cb) {
+  User.find({}, function(err, users) {
+    users.forEach(function(user) {
+      cb(user.chatId, "yo");
+    });
+  });
+};
+
 module.exports = {
   createUser,
-  checkUser
+  checkUser,
+  reserve
 };

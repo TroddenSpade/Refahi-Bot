@@ -17,6 +17,7 @@
   "homepage": "https://github.com/3pic/Refahi_Bot#readme",
   "description": "",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "telegraf": "^3.33.3"
   }
 }

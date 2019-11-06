@@ -4,7 +4,7 @@ const Stage = require("telegraf/stage");
 const session = require("telegraf/session");
 const WizardScene = require("telegraf/scenes/wizard");
 
-const { createUser } = require("./src/database");
+const { createUser, checkUser } = require("./src/database");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -24,18 +24,20 @@ const superWizard = new WizardScene(
   },
   async ctx => {
     ctx.wizard.state.pass = ctx.message.text;
-    await createUser({
-      stuId: ctx.wizard.state.user,
-      pass: ctx.wizard.state.pass,
-      telId: ctx.from.id
-    },
-    (doc)=>{
-	ctx.reply(`Saved id:${doc._id}`);
-    },
-    (res)=>{
-	ctx.reply(`Error : ${res.err}`);
-	ctx.reply(`Need Help ? contact us:  @troddenspade`);
-    });
+    await createUser(
+      {
+        stuId: ctx.wizard.state.user,
+        pass: ctx.wizard.state.pass,
+        telId: ctx.from.id
+      },
+      doc => {
+        ctx.reply(`Saved id:${doc._id}`);
+      },
+      res => {
+        ctx.reply(`Error : ${res.err}`);
+        ctx.reply(`Need Help ? contact us:  @troddenspade`);
+      }
+    );
 
     return ctx.wizard.next();
   }
@@ -71,9 +73,18 @@ bot.start(async ctx => {
 });
 
 bot.action("SIGN_IN", async ctx => {
-  ctx.editMessageText("/cancel to stop the operation");
-  await ctx.scene.enter("super-wizard");
+  checkUser(
+    ctx.from.id,
+    () => {
+      ctx.editMessageText("/cancel to stop the operation");
+      ctx.scene.enter("super-wizard");
+    },
+    () => {
+      ctx.reply(`You can't SignUp once you've signed up :|`);
+      ctx.reply(`Need Help ? contact us:  @troddenspade`);
+    }
+  );
 });
-bot.action("STOP", ctx => ctx.editMessageText("okey"));
+bot.action("STOP", ctx => ctx.editMessageText("it doesn't work now but, okey"));
 
 bot.launch();

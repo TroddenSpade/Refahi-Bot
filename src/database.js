@@ -9,24 +9,31 @@ mongoose.connect(config.DATABASE, {
   useCreateIndex: true
 });
 
-const createUser = function(data,sb,fb) {
+const createUser = function(data, sb, fb) {
   const user = new User(data);
-
   user.save((err, doc) => {
     if (err) {
-       fb({
+      fb({
         signup: false,
         err: err
-      })
-    }else{
+      });
+    } else {
       sb({
         signup: true,
         user: doc
       });
     }
   });
-}
+};
+
+const checkUser = function(telId, sb, fb) {
+  User.exists({ telId }, res => {
+    if (res) sb();
+    else fb();
+  });
+};
 
 module.exports = {
-  createUser
+  createUser,
+  checkUser
 };

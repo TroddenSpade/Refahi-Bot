@@ -15,6 +15,11 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     unique: true
+  },
+  chatId: {
+    type: String,
+    required: true,
+    unique: true
   }
 });
 

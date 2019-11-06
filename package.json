@@ -20,6 +20,7 @@
     "cron": "^1.7.2",
     "dotenv": "^8.2.0",
     "mongoose": "^5.7.8",
+    "request-promise": "^4.2.5",
     "telegraf": "^3.33.3"
   }
 }

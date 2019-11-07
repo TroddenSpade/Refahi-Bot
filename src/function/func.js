@@ -200,11 +200,7 @@ module.exports.d0_da_g3t = async function(user) {
   let w33k_info = await post_n3xtw33k(cur_w33k_time);
   let r3sp0ns3 = await post_r3s3rv3(w33k_info);
 
-  let start = r3sp0ns3.search('class="messages-container"') + 117;
-  let i;
-  for (i = start; ; i++) {
-    if (r3sp0ns3.charAt(i) === '"') break;
-  }
+  if (r3sp0ns3.search("successMessages") > 0) return "Successfully done";
 
-  return r3sp0ns3.substring(start, i);
+  return "an Error has Occurred !";
 };

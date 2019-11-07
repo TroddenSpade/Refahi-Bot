@@ -57,22 +57,15 @@ bot.use(stage.middleware());
 bot.start(async ctx => {
   if (ctx.from.id == process.env.SAM) {
     ctx.reply("Hey Sam What's up ? 0_0");
-    ctx.reply(
-      `How can I help you`,
-      Markup.inlineKeyboard([
-        Markup.callbackButton("Sign Up for Weekly Reservation", "SIGN_IN"),
-        Markup.callbackButton("Stop My Plan", "STOP")
-      ]).extra()
-    );
-  } else {
-    ctx.reply(
-      `How can I help you, ${ctx.from.first_name}?`,
-      Markup.inlineKeyboard([
-        Markup.callbackButton("Sign Up for Weekly Reservation", "SIGN_IN"),
-        Markup.callbackButton("Stop My Plan", "STOP")
-      ]).extra()
-    );
   }
+  ctx.reply(
+    `How can I help you, ${ctx.from.first_name}?`,
+    Markup.inlineKeyboard([
+      Markup.callbackButton("Sign Up for Weekly Reservation", "SIGN_IN"),
+      Markup.callbackButton("Stop My Plan", "STOP"),
+      Markup.callbackButton("Days Of Week", "DAYS")
+    ]).extra()
+  );
 });
 
 bot.action("SIGN_IN", async ctx => {
@@ -89,6 +82,34 @@ bot.action("SIGN_IN", async ctx => {
   );
 });
 bot.action("STOP", ctx => ctx.editMessageText("it doesn't work now but, okey"));
+bot.action("DAYS", ctx => {
+  ctx.editMessageText("/cancel to stop the operation");
+  ctx.reply(
+    `DAYS?`,
+    Markup.inlineKeyboard([
+      Markup.callbackButton(
+        ctx.state.days[0] ? "Shanbe ❌" : "Shanbe ✅",
+        "DAY_0"
+      ),
+      Markup.callbackButton(
+        ctx.state.days[0] ? "1 Shanbe ❌" : "1 Shanbe ✅",
+        "DAY_1"
+      ),
+      Markup.callbackButton(
+        ctx.state.days[0] ? "2 Shanbe ❌" : "2 Shanbe ✅",
+        "DAY_2"
+      ),
+      Markup.callbackButton(
+        ctx.state.days[0] ? "3 Shanbe ❌" : "3 Shanbe ✅",
+        "DAY_3"
+      ),
+      Markup.callbackButton(
+        ctx.state.days[0] ? "4 Shanbe ❌" : "4 Shanbe ✅",
+        "DAY_4"
+      )
+    ]).extra()
+  );
+});
 
 bot.launch();
 

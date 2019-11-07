@@ -29,9 +29,7 @@ const createUser = function(data, sb, fb) {
 };
 
 const checkUser = async function(telId, sb, fb) {
-  let ex = await User.exists({ telId: telId });
-  if (!ex) sb();
-  else fb();
+  return await User.findOne({ telId: telId }, { days: 1, _id: 0 });
 };
 
 const reserve = function(cb) {
@@ -46,8 +44,22 @@ const reserve = function(cb) {
   });
 };
 
+const updateDays = function(telId, days, sb, fb) {
+  User.updateOne(
+    { telId: telId },
+    {
+      days: days
+    },
+    function(err, affected, resp) {
+      if (err) fb();
+      else sb();
+    }
+  );
+};
+
 module.exports = {
   createUser,
   checkUser,
-  reserve
+  reserve,
+  updateDays
 };

@@ -20,6 +20,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     unique: true
+  },
+  days: {
+    type: [Boolean],
+    default: [false, false, false, false, false]
   }
 });
 

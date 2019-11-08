@@ -37,7 +37,8 @@ const reserve = function(cb) {
     users.forEach(async function(user) {
       let msg = await d0_da_g3t({
         name: user.stuId,
-        pass: user.pass
+        pass: user.pass,
+        days: user.days
       });
       cb(user.chatId, msg);
     });

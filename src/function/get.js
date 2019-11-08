@@ -46,7 +46,7 @@ function __t0uchB0dy(b0dy) {
       return console.log(err);
     }
 
-    console.log("b0dy t0ch3d !");
+    // console.log("b0dy t0ch3d !");
   });
 }
 
@@ -70,10 +70,10 @@ function __get_data(b0dy, index) {
   };
 }
 
-function __calc_cr3d1t(data) {
+function __calc_cr3d1t(data, days) {
   cre = parseInt(data.credit);
   for (let i = 0; i < data.data.length; i += 2) {
-    cre -= parseInt(data.data[i].price);
+    if (days[i / 2]) cre -= parseInt(data.data[i].price);
   }
   return cre;
 }

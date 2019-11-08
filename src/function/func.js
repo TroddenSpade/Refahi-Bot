@@ -1,4 +1,5 @@
-const rq = require("request-promise");
+const request = require("request");
+const rq = require("request-promise-native");
 
 const {
   __get_w33k_1nf0,
@@ -13,39 +14,57 @@ const {
 
 var conf1g = require("./config/config");
 
-function g3n_params(data) {
+function g3n_params(data, days) {
   let params = "";
   for (let i = 0; i < data.length; i += 2) {
-    let first =
-      `userWeekReserves%5B${i}%5D.selected=true&` +
-      `userWeekReserves%5B${i}%5D.programId=${data[i].programId}&` +
-      `userWeekReserves%5B${i}%5D.mealTypeId=2&` +
-      `userWeekReserves%5B${i}%5D.programDateTime=${data[i].time}&` +
-      `userWeekReserves%5B${i}%5D.selfId=1&` +
-      `userWeekReserves%5B${i}%5D.foodTypeId=${data[i].foodTypeId}&` +
-      `userWeekReserves%5B${i}%5D.selectedCount=1&`;
-    let last =
-      `userWeekReserves%5B${i + 1}%5D.programId=${data[i + 1].programId}&` +
-      `userWeekReserves%5B${i + 1}%5D.mealTypeId=2&` +
-      `userWeekReserves%5B${i + 1}%5D.programDateTime=${data[i + 1].time}&` +
-      `userWeekReserves%5B${i + 1}%5D.selfId=1&` +
-      `userWeekReserves%5B${i + 1}%5D.foodTypeId=${data[i + 1].foodTypeId}&`;
+    let day = "";
+    if (days[i / 2]) {
+      day =
+        `userWeekReserves%5B${i}%5D.selected=true&` +
+        `userWeekReserves%5B${i}%5D.programId=${data[i].programId}&` +
+        `userWeekReserves%5B${i}%5D.mealTypeId=2&` +
+        `userWeekReserves%5B${i}%5D.programDateTime=${data[i].time}&` +
+        `userWeekReserves%5B${i}%5D.selfId=1&` +
+        `userWeekReserves%5B${i}%5D.foodTypeId=${data[i].foodTypeId}&` +
+        `userWeekReserves%5B${i}%5D.selectedCount=1&` +
+        `userWeekReserves%5B${i + 1}%5D.programId=${data[i + 1].programId}&` +
+        `userWeekReserves%5B${i + 1}%5D.mealTypeId=2&` +
+        `userWeekReserves%5B${i + 1}%5D.programDateTime=${data[i + 1].time}&` +
+        `userWeekReserves%5B${i + 1}%5D.selfId=1&` +
+        `userWeekReserves%5B${i + 1}%5D.foodTypeId=${data[i + 1].foodTypeId}&`;
+    } else {
+      day =
+        `userWeekReserves%5B${i}%5D.selected=false&` +
+        `userWeekReserves%5B${i}%5D.selectedCount=0&` +
+        `userWeekReserves%5B${i}%5D.programId=${data[i].programId}&` +
+        `userWeekReserves%5B${i}%5D.mealTypeId=2&` +
+        `userWeekReserves%5B${i}%5D.programDateTime=${data[i].time}&` +
+        `userWeekReserves%5B${i}%5D.selfId=1&` +
+        `userWeekReserves%5B${i}%5D.foodTypeId=${data[i].foodTypeId}&` +
+        `userWeekReserves%5B${i + 1}%5D.selected=false&` +
+        `userWeekReserves%5B${i + 1}%5D.selectedCount=0&` +
+        `userWeekReserves%5B${i + 1}%5D.programId=${data[i + 1].programId}&` +
+        `userWeekReserves%5B${i + 1}%5D.mealTypeId=2&` +
+        `userWeekReserves%5B${i + 1}%5D.programDateTime=${data[i + 1].time}&` +
+        `userWeekReserves%5B${i + 1}%5D.selfId=1&` +
+        `userWeekReserves%5B${i + 1}%5D.foodTypeId=${data[i + 1].foodTypeId}&`;
+    }
 
-    params = params + first + last;
+    params = params + day;
   }
-
   return params;
 }
 
-async function post_r3s3rv3(data) {
+async function post_r3s3rv3(data, days) {
   let url =
     conf1g.url.r3s3rv3r0s3 +
     `?weekStartDateTime=${data.weekStartDateTime}&remainCredit=${__calc_cr3d1t(
-      data
+      data,
+      days
     )}&method%3AdoReserve=Submit&selfChangeReserveId=&weekStartDateTimeAjx=${
       data.weekStartDateTimeAjx
     }&selectedSelfDefId=1&` +
-    g3n_params(data.data) +
+    g3n_params(data.data, days) +
     `_csrf=${data._csrf}`;
 
   var options = {
@@ -63,6 +82,7 @@ async function post_r3s3rv3(data) {
   };
 
   return await rq(options).then(body => {
+    // __t0uchB0dy(body);
     return body;
   });
 }
@@ -147,7 +167,7 @@ async function get_pan3lR0S3(J_S3$$ion) {
 //   });
 // }
 
-async function post_Js3c(data, user) {
+async function post_Js3c(data, user, cb) {
   var options = {
     method: "POST",
     url: conf1g.url.j_sec,
@@ -198,7 +218,7 @@ module.exports.d0_da_g3t = async function(user) {
   let J_S3$$ion = await post_Js3c(J$_C$, user);
   let cur_w33k_time = await get_pan3lR0S3(J_S3$$ion);
   let w33k_info = await post_n3xtw33k(cur_w33k_time);
-  let r3sp0ns3 = await post_r3s3rv3(w33k_info);
+  let r3sp0ns3 = await post_r3s3rv3(w33k_info, user.days);
 
   if (r3sp0ns3.search("successMessages") > 0) return "Successfully done";
 

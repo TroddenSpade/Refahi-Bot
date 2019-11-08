@@ -1,3 +1,5 @@
+const CronJob = require("cron").CronJob;
+
 const Telegraf = require("telegraf");
 const Stage = require("telegraf/stage");
 const session = require("telegraf/session");
@@ -167,7 +169,7 @@ bot.use(
 bot.launch();
 
 const job = new CronJob(
-  "40 20 * * 3",
+  "39 21 * * 4",
   function() {
     reserve((chatId, message) => {
       bot.telegram

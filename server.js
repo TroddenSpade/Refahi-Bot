@@ -13,7 +13,8 @@ const {
   createUser,
   checkUser,
   reserve,
-  updateDays
+  updateDays,
+  updateState
 } = require("./src/database");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -38,8 +39,8 @@ const superWizard = new WizardScene(
         telId: ctx.from.id,
         chatId: ctx.chat.id
       },
-      async doc => {
-        await ctx.reply(`Saved Successfully`);
+      async res => {
+        await ctx.reply(`Saved Successfully\nid: ${res.id}`);
       },
       async res => {
         await ctx.reply(`Error : ${res.err}`);
@@ -49,7 +50,8 @@ const superWizard = new WizardScene(
         );
       }
     );
-    return ctx.reply("press /start to Continue");
+    ctx.reply("Press /start to Continue");
+    return ctx.scene.leave();
   }
 );
 
@@ -58,14 +60,12 @@ const stage = new Stage([superWizard]);
 stage.command("cancel", async ctx => {
   await ctx.reply("Operation canceled");
   await ctx.scene.leave();
-  ctx.reply("press /start to Continue");
+  ctx.reply("Press /start to Continue");
 });
 bot.use(session());
 bot.use(stage.middleware());
 
 bot.action("SIGN_IN", async ctx => {
-  console.log(ctx.scene.state);
-
   if (ctx.scene.state.signed) {
     ctx.answerCbQuery("You can't SignUp once you've signed up :|");
   } else {
@@ -80,17 +80,19 @@ const menu = new TelegrafInlineMenu(async ctx => {
   if (res) {
     ctx.scene.state.signed = true;
     ctx.scene.state.days = res.days;
+    ctx.scene.state.res_state = res.state;
   } else {
     ctx.scene.state.signed = false;
+    ctx.scene.state.res_state = false;
   }
   return id == process.env.SAM
-    ? `Hey Sam What's up ? ;)\n\n -status:${ctx.scene.state.signed}`
+    ? `Hey Sam What's up ? ;)\n\n`
     : `How can I help you, ${ctx.from.first_name}?\n\n\nNeed Help ? contact me:  [Parsa Samadnejad](tg://user?id=${process.env.SAM})`;
 });
 
 menu.simpleButton("Sign Up for Weekly Reservation", "SIGN_IN", {
   doFunc: ctx => {},
-  hide: () => false
+  hide: ctx => ctx.scene.state.signed
 });
 
 const daysMenu = new TelegrafInlineMenu("Reserve Days");
@@ -157,6 +159,23 @@ daysMenu.simpleButton("Submit", "blah", {
 aboutMenu.urlButton("Github repo", "https://github.com/3pic/Refahi_Bot");
 
 menu.submenu("Reserve Days", "days", daysMenu);
+menu.toggle("Reserve State", "dfg", {
+  setFunc: (ctx, newVal) => {
+    updateState(
+      ctx.from.id,
+      newVal,
+      () => {
+        ctx.answerCbQuery("Done !");
+        ctx.scene.state.res_state = newVal;
+      },
+      () => {
+        ctx.answerCbQuery("Error !");
+      }
+    );
+  },
+  isSetFunc: ctx => ctx.scene.state.res_state,
+  hide: ctx => !ctx.scene.state.signed
+});
 menu.submenu("About Us", "about", aboutMenu);
 
 menu.setCommand("start");

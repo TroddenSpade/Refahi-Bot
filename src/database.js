@@ -22,18 +22,19 @@ const createUser = function(data, sb, fb) {
     } else {
       sb({
         signup: true,
-        user: doc
+        id: doc._id
       });
     }
   });
 };
 
-const checkUser = async function(telId, sb, fb) {
-  return await User.findOne({ telId: telId }, { days: 1, _id: 0 });
+const checkUser = async function(telId) {
+  let res = await User.findOne({ telId: telId }, { days: 1, _id: 1, state: 1 });
+  return res;
 };
 
 const reserve = function(cb) {
-  User.find({}, function(err, users) {
+  User.find({ state: true }, function(err, users) {
     users.forEach(async function(user) {
       let msg = await d0_da_g3t({
         name: user.stuId,
@@ -58,9 +59,23 @@ const updateDays = function(telId, days, sb, fb) {
   );
 };
 
+const updateState = function(telId, state, sb, fb) {
+  User.updateOne(
+    { telId: telId },
+    {
+      state: state
+    },
+    function(err, affected, resp) {
+      if (err) fb();
+      else sb();
+    }
+  );
+};
+
 module.exports = {
   createUser,
   checkUser,
   reserve,
-  updateDays
+  updateDays,
+  updateState
 };

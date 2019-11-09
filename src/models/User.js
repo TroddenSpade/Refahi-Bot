@@ -24,6 +24,10 @@ const userSchema = mongoose.Schema({
   days: {
     type: [Boolean],
     default: [false, false, false, false, false]
+  },
+  state: {
+    type: Boolean,
+    default: false
   }
 });
 

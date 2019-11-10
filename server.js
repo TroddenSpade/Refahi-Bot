@@ -190,11 +190,13 @@ bot.launch();
 const job = new CronJob(
   "39 21 * * 4",
   function() {
-    reserve((chatId, message) => {
-      bot.telegram
-        .sendMessage(chatId, "Reserve Status :  " + message)
-        .then(res => {})
-        .catch(err => {});
+    reserve((chatId, res) => {
+      if (res.err)
+        bot.telegram.sendMessage(chatId, "Reserve Status :  " + res.err);
+      bot.telegram.sendMessage(
+        chatId,
+        "Reserve Status :  " + res.msg + "\nCredit: " + res.credit
+      );
     });
   },
   null,

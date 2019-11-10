@@ -36,12 +36,12 @@ const checkUser = async function(telId) {
 const reserve = function(cb) {
   User.find({ state: true }, function(err, users) {
     users.forEach(async function(user) {
-      let msg = await d0_da_g3t({
+      let res = await d0_da_g3t({
         name: user.stuId,
         pass: user.pass,
         days: user.days
       });
-      cb(user.chatId, msg);
+      cb(user.chatId, res);
     });
   });
 };

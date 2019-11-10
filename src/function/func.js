@@ -3,35 +3,50 @@ const rq = require("request-promise-native");
 
 const {
   __get_w33k_1nf0,
-  __calc_cr3d1t,
   __t0uchB0dy,
   __get_cr3d1t,
   __get_start_w33k,
   __get_start_Ajx,
   __get_c$rf,
-  __getJ_S3$$ion
+  __getJ_S3$$ion,
+  getP
 } = require("./get");
 
 var conf1g = require("./config/config");
 
-function g3n_params(data, days) {
+function d0_de_math(data, user, credit) {
   let params = "";
+  let m, k;
   for (let i = 0; i < data.length; i += 2) {
     let day = "";
-    if (days[i / 2]) {
+    if (user.days[i / 2]) {
+      console.log(getP(data[i].name, user.priority), data[i].name);
+      console.log(getP(data[i + 1].name, user.priority), data[i + 1].name);
+      if (
+        getP(data[i].name, user.priority) >=
+        getP(data[i + 1].name, user.priority)
+      ) {
+        m = i;
+        k = i + 1;
+        credit -= parseInt(data[i].price);
+      } else {
+        m = i + 1;
+        k = i;
+        credit -= parseInt(data[i + 1].price);
+      }
       day =
-        `userWeekReserves%5B${i}%5D.selected=true&` +
-        `userWeekReserves%5B${i}%5D.programId=${data[i].programId}&` +
-        `userWeekReserves%5B${i}%5D.mealTypeId=2&` +
-        `userWeekReserves%5B${i}%5D.programDateTime=${data[i].time}&` +
-        `userWeekReserves%5B${i}%5D.selfId=1&` +
-        `userWeekReserves%5B${i}%5D.foodTypeId=${data[i].foodTypeId}&` +
-        `userWeekReserves%5B${i}%5D.selectedCount=1&` +
-        `userWeekReserves%5B${i + 1}%5D.programId=${data[i + 1].programId}&` +
-        `userWeekReserves%5B${i + 1}%5D.mealTypeId=2&` +
-        `userWeekReserves%5B${i + 1}%5D.programDateTime=${data[i + 1].time}&` +
-        `userWeekReserves%5B${i + 1}%5D.selfId=1&` +
-        `userWeekReserves%5B${i + 1}%5D.foodTypeId=${data[i + 1].foodTypeId}&`;
+        `userWeekReserves%5B${m}%5D.selected=true&` +
+        `userWeekReserves%5B${m}%5D.programId=${data[m].programId}&` +
+        `userWeekReserves%5B${m}%5D.mealTypeId=2&` +
+        `userWeekReserves%5B${m}%5D.programDateTime=${data[m].time}&` +
+        `userWeekReserves%5B${m}%5D.selfId=1&` +
+        `userWeekReserves%5B${m}%5D.foodTypeId=${data[m].foodTypeId}&` +
+        `userWeekReserves%5B${m}%5D.selectedCount=1&` +
+        `userWeekReserves%5B${k}%5D.programId=${data[k].programId}&` +
+        `userWeekReserves%5B${k}%5D.mealTypeId=2&` +
+        `userWeekReserves%5B${k}%5D.programDateTime=${data[k].time}&` +
+        `userWeekReserves%5B${k}%5D.selfId=1&` +
+        `userWeekReserves%5B${k}%5D.foodTypeId=${data[k].foodTypeId}&`;
     } else {
       day =
         `userWeekReserves%5B${i}%5D.selected=false&` +
@@ -52,19 +67,20 @@ function g3n_params(data, days) {
 
     params = params + day;
   }
-  return params;
+  return {
+    params,
+    credit
+  };
 }
 
-async function post_r3s3rv3(data, days) {
+async function post_r3s3rv3(data, user) {
+  let res = d0_de_math(data.data, user, parseInt(data.credit));
   let url =
     conf1g.url.r3s3rv3r0s3 +
-    `?weekStartDateTime=${data.weekStartDateTime}&remainCredit=${__calc_cr3d1t(
-      data,
-      days
-    )}&method%3AdoReserve=Submit&selfChangeReserveId=&weekStartDateTimeAjx=${
-      data.weekStartDateTimeAjx
-    }&selectedSelfDefId=1&` +
-    g3n_params(data.data, days) +
+    `?weekStartDateTime=${data.weekStartDateTime}&remainCredit=${res.credit}&` +
+    `method%3AdoReserve=Submit&selfChangeReserveId=&` +
+    `weekStartDateTimeAjx=${data.weekStartDateTimeAjx}&selectedSelfDefId=1&` +
+    res.params +
     `_csrf=${data._csrf}`;
 
   var options = {
@@ -83,7 +99,7 @@ async function post_r3s3rv3(data, days) {
 
   return await rq(options).then(body => {
     // __t0uchB0dy(body);
-    return body;
+    return { body, credit: res.credit };
   });
 }
 
@@ -218,9 +234,15 @@ module.exports.d0_da_g3t = async function(user) {
   let J_S3$$ion = await post_Js3c(J$_C$, user);
   let cur_w33k_time = await get_pan3lR0S3(J_S3$$ion);
   let w33k_info = await post_n3xtw33k(cur_w33k_time);
-  let r3sp0ns3 = await post_r3s3rv3(w33k_info, user.days);
+  let r3sp0ns3 = await post_r3s3rv3(w33k_info, user);
 
-  if (r3sp0ns3.search("successMessages") > 0) return "Successfully done";
+  if (r3sp0ns3.body.includes("successMessages"))
+    return {
+      msg: "Successfully done",
+      credit: r3sp0ns3.credit
+    };
 
-  return "an Error has Occurred !";
+  return {
+    err: "an Error has Occurred !"
+  };
 };

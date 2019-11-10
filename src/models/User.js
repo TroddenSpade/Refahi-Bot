@@ -28,6 +28,10 @@ const userSchema = mongoose.Schema({
   state: {
     type: Boolean,
     default: false
+  },
+  priority: {
+    type: [String],
+    default: [""]
   }
 });
 

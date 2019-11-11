@@ -92,7 +92,6 @@ function getP(name, priority) {
 
 module.exports = {
   __get_w33k_1nf0,
-  __calc_cr3d1t,
   __t0uchB0dy,
   __get_cr3d1t,
   __get_start_w33k,

@@ -31,7 +31,7 @@ const userSchema = mongoose.Schema({
   },
   priority: {
     type: [String],
-    default: [""]
+    default: []
   }
 });
 

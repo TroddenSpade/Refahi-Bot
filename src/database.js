@@ -72,10 +72,24 @@ const updateState = function(telId, state, sb, fb) {
   );
 };
 
+const updatePrior = function(telId, prior, sb, fb) {
+  User.updateOne(
+    { telId: telId },
+    {
+      priority: prior
+    },
+    function(err, affected, resp) {
+      if (err) fb();
+      else sb();
+    }
+  );
+};
+
 module.exports = {
   createUser,
   checkUser,
   reserve,
   updateDays,
-  updateState
+  updateState,
+  updatePrior
 };

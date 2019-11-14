@@ -61,11 +61,13 @@ function __get_pr1ce(b0dy, index) {
 }
 
 function __get_data(b0dy, index) {
-  let start = b0dy.search(`id="hiddenSelectedCount${index}"`);
+  let time = b0dy.indexOf(`userWeekReserves[${index}].programDateTime"`);
+  let proID = b0dy.indexOf(`userWeekReserves[${index}].programId"`);
+  let type = b0dy.indexOf(`userWeekReserves[${index}].foodTypeId"`);
   return {
-    programId: b0dy.substring(start + 823, start + 829),
-    time: b0dy.substring(start + 1537, start + 1550),
-    foodTypeId: b0dy.substring(start + 2249, start + 2252),
+    programId: b0dy.substring(proID + 134, proID + 140),
+    time: b0dy.substring(time + 140, time + 153),
+    foodTypeId: b0dy.substring(type + 135, type + 138),
     price: __get_pr1ce(b0dy, index),
     name: __get_F00d_nam3(b0dy, index)
   };
@@ -91,13 +93,13 @@ function __get_F00d_nam3(b0dy, index) {
   return b0dy.substring(start, i);
 }
 
-function getP(name, priority) {
+function __getP(name, priority) {
   for (let i = 0; i < priority.length; i++) {
     if (name.includes(priority[i])) {
       return i;
     }
   }
-  return -1;
+  return 30;
 }
 
 module.exports = {
@@ -110,5 +112,5 @@ module.exports = {
   __get_c$rf,
   __getJ_S3$$ion,
   __get_cr3d1t,
-  getP
+  __getP
 };

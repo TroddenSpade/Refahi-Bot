@@ -230,7 +230,10 @@ daysMenu.simpleButton("Submit", "blah", {
   hide: ctx => !ctx.scene.state.signed
 });
 
-aboutMenu.urlButton("Github repo", "https://github.com/3pic/Refahi_Bot");
+aboutMenu.urlButton(
+  "Github repo",
+  "https://github.com/TroddenSpade/Refahi-Bot"
+);
 
 menu.submenu("Reserve Days", "days", daysMenu, {
   hide: ctx => !ctx.scene.state.signed
@@ -295,7 +298,7 @@ bot.use(
 bot.launch();
 
 const reserve_cron = new CronJob(
-  "26 17 * * 2",
+  "00 12 * * 4",
   function() {
     reserve((chatId, res) => {
       if (res.err)
@@ -316,7 +319,7 @@ const reserve_cron = new CronJob(
 );
 
 const ready_cron = new CronJob(
-  "26 17 * * 2",
+  "50 11 * * 4",
   function() {
     callOn(chatId => {
       bot.telegram

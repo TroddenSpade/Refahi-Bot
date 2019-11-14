@@ -43,7 +43,8 @@ const reserve = function(cb) {
         name: user.stuId,
         pass: user.pass,
         days: user.days,
-        priority: user.priority
+        priority: user.priority,
+        self: user.self
       });
       cb(user.chatId, res);
     });

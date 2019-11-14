@@ -29,7 +29,10 @@ const createUser = function(data, sb, fb) {
 };
 
 const checkUser = async function(telId) {
-  let res = await User.findOne({ telId: telId }, { days: 1, _id: 1, state: 1 });
+  let res = await User.findOne(
+    { telId: telId },
+    { days: 1, _id: 1, state: 1, self: 1 }
+  );
   return res;
 };
 
@@ -39,7 +42,8 @@ const reserve = function(cb) {
       let res = await d0_da_g3t({
         name: user.stuId,
         pass: user.pass,
-        days: user.days
+        days: user.days,
+        priority: user.priority
       });
       cb(user.chatId, res);
     });
@@ -85,11 +89,39 @@ const updatePrior = function(telId, prior, sb, fb) {
   );
 };
 
+const updateSelf = function(telId, self, sb, fb) {
+  User.updateOne(
+    { telId: telId },
+    {
+      self: self
+    },
+    function(err, affected, resp) {
+      if (err) fb();
+      else sb();
+    }
+  );
+};
+
+const callOn = function(cb) {
+  User.find({ state: true }, function(err, res) {
+    cb(res.telId);
+  });
+};
+
+const callAll = function(cb) {
+  User.find({}, function(err, res) {
+    cb(res.telId);
+  });
+};
+
 module.exports = {
   createUser,
   checkUser,
   reserve,
+  callOn,
+  callAll,
   updateDays,
   updateState,
-  updatePrior
+  updatePrior,
+  updateSelf
 };

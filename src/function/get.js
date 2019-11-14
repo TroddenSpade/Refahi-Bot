@@ -66,7 +66,8 @@ function __get_data(b0dy, index) {
     programId: b0dy.substring(start + 823, start + 829),
     time: b0dy.substring(start + 1537, start + 1550),
     foodTypeId: b0dy.substring(start + 2249, start + 2252),
-    price: __get_pr1ce(b0dy, index)
+    price: __get_pr1ce(b0dy, index),
+    name: __get_F00d_nam3(b0dy, index)
   };
 }
 
@@ -81,22 +82,33 @@ function __get_w33k_1nf0(b0dy) {
   return arr;
 }
 
+function __get_F00d_nam3(b0dy, index) {
+  let start = b0dy.indexOf(`xstooltip_hide('foodPriceTooltip${index}');`) + 136;
+  let i;
+  for (i = start; ; i++) {
+    if (b0dy.charAt(i) === "\r") break;
+  }
+  return b0dy.substring(start, i);
+}
+
 function getP(name, priority) {
   for (let i = 0; i < priority.length; i++) {
-    if (priority[i].includes(name)) {
+    if (name.includes(priority[i])) {
       return i;
     }
   }
-  return 30;
+  return -1;
 }
 
 module.exports = {
   __get_w33k_1nf0,
+  __get_data,
+  __get_pr1ce,
   __t0uchB0dy,
-  __get_cr3d1t,
   __get_start_w33k,
   __get_start_Ajx,
   __get_c$rf,
   __getJ_S3$$ion,
+  __get_cr3d1t,
   getP
 };

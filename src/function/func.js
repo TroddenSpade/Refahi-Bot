@@ -77,9 +77,7 @@ async function post_r3s3rv3(data, user) {
   let res = d0_de_math(data.data, user, parseInt(data.credit));
   let url =
     conf1g.url.r3s3rv3r0s3 +
-    `?weekStartDateTime=${data.weekStartDateTime}&remainCredit=${res.credit}&` +
-    `method%3AdoReserve=Submit&selfChangeReserveId=&` +
-    `weekStartDateTimeAjx=${data.weekStartDateTimeAjx}&selectedSelfDefId=1&` +
+    `?weekStartDateTime=${data.weekStartDateTime}&remainCredit=${res.credit}&method%3AdoReserve=Submit&selfChangeReserveId=&weekStartDateTimeAjx=${data.weekStartDateTimeAjx}&selectedSelfDefId=1&` +
     res.params +
     `_csrf=${data._csrf}`;
 
@@ -98,7 +96,7 @@ async function post_r3s3rv3(data, user) {
   };
 
   return await rq(options).then(body => {
-    // __t0uchB0dy(body);
+    __t0uchB0dy(body);
     return { body, credit: res.credit };
   });
 }
@@ -137,6 +135,41 @@ async function post_n3xtw33k(data) {
     };
   });
 }
+
+// function post_lastw33k(data){
+//   var options = {
+//     method: "POST",
+//     url: conf1g.url.r3s3rv3r0s3,
+//     headers: {
+//       "cache-control": "no-cache",
+//       Cookie: data.J_S3$$ion,
+//       "Accept-Encoding": "gzip, deflate",
+//       "Cache-Control": "no-cache",
+//       Accept: "*/*",
+//       "User-Agent": "__hahaholo__",
+//       "Content-Type": "application/x-www-form-urlencoded"
+//     },
+//     form: {
+//       weekStartDateTime: data.weekStartDateTime,
+//       "method:showNextWeek": "Submit",
+//       selfChangeReserveId: "",
+//       weekStartDateTimeAjx: data.weekStartDateTimeAjx,
+//       selectedSelfDefId: "1",
+//       _csrf: data._csrf
+//     }
+//   };
+
+//   return await rq(options).then(body => {
+//     return {
+//       weekStartDateTime: __get_start_w33k(body),
+//       weekStartDateTimeAjx: __get_start_Ajx(body),
+//       _csrf: __get_c$rf(body),
+//       J_S3$$ion: data.J_S3$$ion,
+//       credit: __get_cr3d1t(body),
+//       data: __get_w33k_1nf0(body)
+//     };
+//   });
+// }
 
 async function get_pan3lR0S3(J_S3$$ion) {
   var options = {
@@ -236,13 +269,15 @@ module.exports.d0_da_g3t = async function(user) {
   let w33k_info = await post_n3xtw33k(cur_w33k_time);
   let r3sp0ns3 = await post_r3s3rv3(w33k_info, user);
 
-  if (r3sp0ns3.body.includes("successMessages"))
+  console.log(r3sp0ns3);
+
+  if (r3sp0ns3.body.search("successMessages") > 0)
     return {
       msg: "Successfully done",
       credit: r3sp0ns3.credit
     };
 
   return {
-    err: "an Error has Occurred !"
+    err: "Error !"
   };
 };

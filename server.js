@@ -14,9 +14,12 @@ const {
   createUser,
   checkUser,
   reserve,
+  callOn,
+  callAll,
   updateDays,
   updateState,
-  updatePrior
+  updatePrior,
+  updateSelf
 } = require("./src/database");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -117,6 +120,7 @@ const menu = new TelegrafInlineMenu(async ctx => {
     ctx.scene.state.res_state = res.state;
     ctx.scene.state.priority = new Array(foods.length).fill(false);
     ctx.scene.state.foods = [];
+    ctx.scene.state.self = res.self;
   } else {
     ctx.scene.state.signed = false;
     ctx.scene.state.res_state = false;
@@ -240,7 +244,6 @@ menu.toggle("Reserve State", "dfg", {
       ctx.from.id,
       newVal,
       () => {
-        ctx.answerCbQuery("Done !");
         ctx.scene.state.res_state = newVal;
       },
       () => {
@@ -251,6 +254,35 @@ menu.toggle("Reserve State", "dfg", {
   isSetFunc: ctx => ctx.scene.state.res_state,
   hide: ctx => !ctx.scene.state.signed
 });
+menu.select(
+  "a2",
+  {
+    1: "سلف پردیس برق و کامپیوتر - 1",
+    2: "سلف پردیس مکانیک و صنایع - 2",
+    3: "سلف پردیس عمران و نقشه برداری - 3",
+    4: "سلف پردیس علوم - 4",
+    5: "سلف پردیس هوا و فضا - 5"
+  },
+  {
+    setFunc: (ctx, key) => {
+      updateSelf(
+        ctx.from.id,
+        key,
+        () => {
+          ctx.scene.state.self = key;
+        },
+        () => {
+          ctx.answerCbQuery("Error !");
+        }
+      );
+    },
+    isSetFunc: (ctx, key) => {
+      return ctx.scene.state.self === key;
+    },
+    hide: ctx => !ctx.scene.state.signed,
+    columns: 2
+  }
+);
 menu.submenu("About Us", "about", aboutMenu);
 
 menu.setCommand("start");
@@ -262,20 +294,44 @@ bot.use(
 );
 bot.launch();
 
-const job = new CronJob(
-  "39 21 * * 4",
+const reserve_cron = new CronJob(
+  "26 17 * * 2",
   function() {
     reserve((chatId, res) => {
       if (res.err)
         bot.telegram.sendMessage(chatId, "Reserve Status :  " + res.err);
-      bot.telegram.sendMessage(
-        chatId,
-        "Reserve Status :  " + res.msg + "\nCredit: " + res.credit
-      );
+      else
+        bot.telegram
+          .sendMessage(
+            chatId,
+            "Reserve Status :  " + res.msg + "\nCredit: " + res.credit
+          )
+          .then()
+          .catch();
     });
   },
   null,
   true,
   "Asia/Tehran"
 );
-job.start();
+
+const ready_cron = new CronJob(
+  "26 17 * * 2",
+  function() {
+    callOn(chatId => {
+      bot.telegram
+        .sendMessage(
+          chatId,
+          "Going to Reserve in an Hour ...\nPlease Check Your settings."
+        )
+        .then()
+        .catch();
+    });
+  },
+  null,
+  true,
+  "Asia/Tehran"
+);
+
+ready_cron.start();
+reserve_cron.start();

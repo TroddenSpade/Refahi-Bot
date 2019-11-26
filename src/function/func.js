@@ -267,14 +267,21 @@ module.exports.d0_da_g3t = async function(user) {
   let w33k_info = await post_n3xtw33k(cur_w33k_time, user.self);
   let r3sp0ns3 = await post_r3s3rv3(w33k_info, user);
 
-  if (r3sp0ns3.body.search("successMessages") > 0)
+  if (r3sp0ns3.body.indexOf("successMessages") > 0)
     return {
-      msg: "Successfully done",
-      credit: r3sp0ns3.credit
+      msg: "Successfully done"
     };
-  // else if()
-
+  else if (r3sp0ns3.body.indexOf("errorMessages") > 0) {
+    let err = r3sp0ns3.body.indexOf("errorMessages") + 128;
+    let i = 0;
+    while (r3sp0ns3.body.charAt(err + i) != "<") {
+      i++;
+    }
+    return {
+      msg: r3sp0ns3.body.substring(err, err + i)
+    };
+  }
   return {
-    err: "Error !"
+    err: "unknown Error !"
   };
 };

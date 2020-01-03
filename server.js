@@ -31,7 +31,7 @@ const foods = [
   "لوبیا پلو",
   "چلوجوجه کباب",
   "چلو کوکو سبزی",
-  "عدس پلو با گوشت چرخ کرده",
+  "عدس پلو",
   "دلمه فلفل یا دلمه بادمجان",
   "زرشک پلو با مرغ",
   "چلوخورشت قیمه بادمجان",
@@ -53,7 +53,10 @@ const foods = [
   "چلو کباب نگینی",
   "چلو خورشت کرفس",
   "خوراک کوبیده گوشت 2 سیخ",
-  "سبزی پلو با ماهی"
+  "سبزی پلو با ماهی",
+  "آلو اسفناج",
+  "عدسی",
+  "فسنجان"
 ];
 
 const superWizard = new WizardScene(
@@ -144,7 +147,7 @@ const pFood = new TelegrafInlineMenu(ctx => {
   return str;
 });
 const aboutMenu = new TelegrafInlineMenu(
-  `Part of _Refahi Sucks_ project\n\nCreated by : [Parsa Samadnejad](tg://user?id=${process.env.SAM})\n\nSpecial thanks to 3PIC and CE-Council 2019 for their Supports.`
+  `Part of _Refahi Sucks_ project\n\nCreated by : [Parsa Samadnejad](tg://user?id=${process.env.SAM})\n\n`
 );
 
 foods.forEach((e, index) => {
@@ -319,7 +322,7 @@ const reserve_cron = new CronJob(
 );
 
 const ready_cron = new CronJob(
-  "50 11 * * 4",
+  "00 11 * * 4",
   function() {
     callOn(chatId => {
       bot.telegram

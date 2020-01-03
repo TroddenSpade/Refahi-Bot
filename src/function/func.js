@@ -14,57 +14,70 @@ const {
 
 var conf1g = require("./config/config");
 
-function d0_de_math(data, user, credit) {
-  let params = "";
-  let m, k;
-  for (let i = 0; i < data.length; i += 2) {
-    let day = "";
-    if (user.days[i / 2]) {
-      if (
-        __getP(data[i].name, user.priority) >=
-        __getP(data[i + 1].name, user.priority)
-      ) {
-        m = i;
-        k = i + 1;
-        credit -= parseInt(data[i].price);
-      } else {
-        m = i + 1;
-        k = i;
-        credit -= parseInt(data[i + 1].price);
+function form_creator(first_i, last_i, data, user, timestamp) {
+  let form = "";
+  let price = 0;
+  let date = new Date(parseInt(timestamp));
+  if (user.days[(date.getDay() + 1) % 7]) {
+    let prior_index = first_i;
+    let highest_prior = __getP(data[first_i].name, user.priority);
+    for (let i = first_i + 1; i <= last_i; i++) {
+      if (highest_prior < __getP(data[i].name, user.priority)) {
+        prior_index = i;
+        highest_prior = __getP(data[i].name, user.priority);
       }
-      day =
-        `userWeekReserves%5B${m}%5D.selected=true&` +
-        `userWeekReserves%5B${m}%5D.programId=${data[m].programId}&` +
-        `userWeekReserves%5B${m}%5D.mealTypeId=2&` +
-        `userWeekReserves%5B${m}%5D.programDateTime=${data[m].time}&` +
-        `userWeekReserves%5B${m}%5D.selfId=${user.self}&` +
-        `userWeekReserves%5B${m}%5D.foodTypeId=${data[m].foodTypeId}&` +
-        `userWeekReserves%5B${m}%5D.selectedCount=1&` +
-        `userWeekReserves%5B${k}%5D.programId=${data[k].programId}&` +
-        `userWeekReserves%5B${k}%5D.mealTypeId=2&` +
-        `userWeekReserves%5B${k}%5D.programDateTime=${data[k].time}&` +
-        `userWeekReserves%5B${k}%5D.selfId=${user.self}&` +
-        `userWeekReserves%5B${k}%5D.foodTypeId=${data[k].foodTypeId}&`;
-    } else {
-      day =
+    }
+    for (let i = first_i; i <= last_i; i++) {
+      if (i == prior_index) {
+        form +=
+          `userWeekReserves%5B${prior_index}%5D.selected=true&` +
+          `userWeekReserves%5B${prior_index}%5D.programId=${data[prior_index].programId}&` +
+          `userWeekReserves%5B${prior_index}%5D.mealTypeId=2&` +
+          `userWeekReserves%5B${prior_index}%5D.programDateTime=${data[prior_index].time}&` +
+          `userWeekReserves%5B${prior_index}%5D.selfId=${user.self}&` +
+          `userWeekReserves%5B${prior_index}%5D.foodTypeId=${data[prior_index].foodTypeId}&` +
+          `userWeekReserves%5B${prior_index}%5D.selectedCount=1&`;
+      } else {
+        form +=
+          `userWeekReserves%5B${i}%5D.programId=${data[i].programId}&` +
+          `userWeekReserves%5B${i}%5D.mealTypeId=2&` +
+          `userWeekReserves%5B${i}%5D.programDateTime=${data[i].time}&` +
+          `userWeekReserves%5B${i}%5D.selfId=${user.self}&` +
+          `userWeekReserves%5B${i}%5D.foodTypeId=${data[i].foodTypeId}&`;
+      }
+    }
+    price = data[prior_index].price;
+  } else {
+    for (let i = first_i; i <= last_i; i++) {
+      form +=
         `userWeekReserves%5B${i}%5D.selected=false&` +
         `userWeekReserves%5B${i}%5D.selectedCount=0&` +
         `userWeekReserves%5B${i}%5D.programId=${data[i].programId}&` +
         `userWeekReserves%5B${i}%5D.mealTypeId=2&` +
         `userWeekReserves%5B${i}%5D.programDateTime=${data[i].time}&` +
         `userWeekReserves%5B${i}%5D.selfId=${user.self}&` +
-        `userWeekReserves%5B${i}%5D.foodTypeId=${data[i].foodTypeId}&` +
-        `userWeekReserves%5B${i + 1}%5D.selected=false&` +
-        `userWeekReserves%5B${i + 1}%5D.selectedCount=0&` +
-        `userWeekReserves%5B${i + 1}%5D.programId=${data[i + 1].programId}&` +
-        `userWeekReserves%5B${i + 1}%5D.mealTypeId=2&` +
-        `userWeekReserves%5B${i + 1}%5D.programDateTime=${data[i + 1].time}&` +
-        `userWeekReserves%5B${i + 1}%5D.selfId=${user.self}&` +
-        `userWeekReserves%5B${i + 1}%5D.foodTypeId=${data[i + 1].foodTypeId}&`;
+        `userWeekReserves%5B${i}%5D.foodTypeId=${data[i].foodTypeId}&`;
     }
-
-    params = params + day;
   }
+  return { form, price };
+}
+
+function d0_de_math(data, user, credit) {
+  let params = "";
+  let counter = 0;
+
+  while (counter < data.length) {
+    let first_i = counter;
+    let ts = data[counter].time;
+    while (counter < data.length && ts == data[counter].time) {
+      counter++;
+    }
+    let res = form_creator(first_i, counter - 1, data, user, ts);
+
+    params += res.form;
+    credit -= res.price;
+  }
+
   return {
     params,
     credit
@@ -73,6 +86,7 @@ function d0_de_math(data, user, credit) {
 
 async function post_r3s3rv3(data, user) {
   let res = d0_de_math(data.data, user, parseInt(data.credit));
+
   let url =
     conf1g.url.r3s3rv3r0s3 +
     `?weekStartDateTime=${data.weekStartDateTime}&remainCredit=${res.credit}&method%3AdoReserve=Submit&selfChangeReserveId=&weekStartDateTimeAjx=${data.weekStartDateTimeAjx}&selectedSelfDefId=${user.self}&` +
@@ -123,6 +137,8 @@ async function post_n3xtw33k(data, self) {
   };
 
   return await rq(options).then(body => {
+    __t0uchB0dy(body);
+
     return {
       weekStartDateTime: __get_start_w33k(body),
       weekStartDateTimeAjx: __get_start_Ajx(body),
@@ -260,7 +276,7 @@ async function get_1n1t1al_JS3$_c$rf() {
   });
 }
 
-module.exports.d0_da_g3t = async function(user) {
+d0_da_g3t = async function(user) {
   let J$_C$ = await get_1n1t1al_JS3$_c$rf();
   let J_S3$$ion = await post_Js3c(J$_C$, user);
   let cur_w33k_time = await get_pan3lR0S3(J_S3$$ion);
@@ -269,7 +285,8 @@ module.exports.d0_da_g3t = async function(user) {
 
   if (r3sp0ns3.body.indexOf("successMessages") > 0)
     return {
-      msg: "Successfully done"
+      msg: "Successfully done",
+      credit: r3sp0ns3.credit
     };
   else if (r3sp0ns3.body.indexOf("errorMessages") > 0) {
     let err = r3sp0ns3.body.indexOf("errorMessages") + 128;
@@ -278,10 +295,17 @@ module.exports.d0_da_g3t = async function(user) {
       i++;
     }
     return {
-      msg: r3sp0ns3.body.substring(err, err + i)
+      msg: r3sp0ns3.body.substring(err, err + i),
+      credit: r3sp0ns3.credit
     };
   }
   return {
-    err: "unknown Error !"
+    err: "unknown Error !",
+    credit: r3sp0ns3.credit
   };
+};
+
+module.exports = {
+  form_creator,
+  d0_da_g3t
 };

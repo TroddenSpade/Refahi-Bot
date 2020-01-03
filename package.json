@@ -25,5 +25,8 @@
     "request-promise-native": "^1.0.8",
     "telegraf": "^3.33.3",
     "telegraf-inline-menu": "^4.0.0"
+  },
+  "devDependencies": {
+    "jest": "^24.9.0"
   }
 }

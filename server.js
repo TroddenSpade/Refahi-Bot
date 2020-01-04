@@ -56,7 +56,8 @@ const foods = [
   "سبزی پلو با ماهی",
   "آلو اسفناج",
   "عدسی",
-  "فسنجان"
+  "فسنجان",
+  "میرزا قاسمی"
 ];
 
 const superWizard = new WizardScene(
@@ -130,7 +131,7 @@ const menu = new TelegrafInlineMenu(async ctx => {
   }
   return id == process.env.SAM
     ? `Hey Sam What's up ? ;)\n\n`
-    : `How can I help you, ${ctx.from.first_name}?\n\n\nNeed Help ? contact me:  [Parsa Samadnejad](tg://user?id=${process.env.SAM})`;
+    : `How can I help you, ${ctx.from.first_name}?\n\n\nNeed Help ? contact me:  [Parsa Sam](tg://user?id=${process.env.SAM})`;
 });
 
 menu.simpleButton("Sign Up for Weekly Reservation", "SIGN_IN", {
@@ -147,8 +148,26 @@ const pFood = new TelegrafInlineMenu(ctx => {
   return str;
 });
 const aboutMenu = new TelegrafInlineMenu(
-  `Part of _Refahi Sucks_ project\n\nCreated by : [Parsa Samadnejad](tg://user?id=${process.env.SAM})\n\n`
+  `Part of _Refahi Sucks_ project\n\nCreated by : [Parsa Samadnejad](tg://user?id=${process.env.SAM})`
 );
+
+const help = new TelegrafInlineMenu(`
+ابتدا برای رزرو هفتگی ثبت نام کنید
+اطلاعات ورود به رفاهی را وارد کنید
+سپس وارد منو اصلی بات میشوید
+
+وضعیت رزرو به صورت دیفالت خاموش میباشد با روشن کردن آن هر هفته برای شما بر اساس اطلاعات داده شده غذا رزرو می شود
+
+میتوانید روز هایی که میخواهید برای شما غذا سفارش داده شود را انتخاب کنید
+
+همچنین میتوانید لیست به روز شده غذا هارا ببینید و غذا هایی را که دوست ندارید را انتخاب کنید
+(بر اساس میزان عدم علاقه آن ها را اولویت بندی نمایید)
+
+در انتها نیز سلف خود را انتخاب کنید
+
+در قسمت درباره ما میتوانید نظرات و پیشنهادات خود را به ما برسانید و دونیت کنید :)
+این پروژه با صورت متن باز میباشد و میتوانید در آن مشارکت کنید
+`);
 
 foods.forEach((e, index) => {
   pFood.toggle(`${e}`, `a${e}`, {
@@ -238,12 +257,8 @@ aboutMenu.urlButton(
   "https://github.com/TroddenSpade/Refahi-Bot"
 );
 
-menu.submenu("Reserve Days", "days", daysMenu, {
-  hide: ctx => !ctx.scene.state.signed
-});
-menu.submenu("Food Priority", "pfood", pFood, {
-  hide: ctx => !ctx.scene.state.signed
-});
+aboutMenu.urlButton("$ Donate", "https://payping.ir/@parsasam");
+
 menu.toggle("Reserve State", "dfg", {
   setFunc: (ctx, newVal) => {
     updateState(
@@ -260,6 +275,13 @@ menu.toggle("Reserve State", "dfg", {
   isSetFunc: ctx => ctx.scene.state.res_state,
   hide: ctx => !ctx.scene.state.signed
 });
+menu.submenu("Reserve Days", "days", daysMenu, {
+  hide: ctx => !ctx.scene.state.signed
+});
+menu.submenu("Food Priority", "pfood", pFood, {
+  hide: ctx => !ctx.scene.state.signed
+});
+
 menu.select(
   "a2",
   {
@@ -289,6 +311,9 @@ menu.select(
     columns: 2
   }
 );
+
+menu.submenu("Help", "help", help);
+
 menu.submenu("About Us", "about", aboutMenu);
 
 menu.setCommand("start");

@@ -335,12 +335,19 @@ const reserve_cron = new CronJob(
   function() {
     reserve((chatId, res) => {
       if (res.err)
-        bot.telegram.sendMessage(chatId, "Reserve Status :  " + res.err);
+        bot.telegram.sendMessage(
+          chatId,
+          "Reserve Status :  " + res.err + "\nPress /start to Continue"
+        );
       else
         bot.telegram
           .sendMessage(
             chatId,
-            "Reserve Status :  " + res.msg + "\nCredit: " + res.credit
+            "Reserve Status :  " +
+              res.msg +
+              "\nCredit: " +
+              res.credit +
+              "\nPress /start to Continue"
           )
           .then()
           .catch();
@@ -371,3 +378,23 @@ const ready_cron = new CronJob(
 
 ready_cron.start();
 reserve_cron.start();
+
+reserve((chatId, res) => {
+  if (res.err)
+    bot.telegram.sendMessage(
+      chatId,
+      "Reserve Status :  " + res.err + "\nPress /start to Continue"
+    );
+  else
+    bot.telegram
+      .sendMessage(
+        chatId,
+        "Reserve Status :  " +
+          res.msg +
+          "\nCredit: " +
+          res.credit +
+          "\nPress /start to Continue"
+      )
+      .then()
+      .catch();
+});

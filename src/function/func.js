@@ -230,7 +230,7 @@ async function get_pan3lR0S3(J_S3$$ion) {
 //   });
 // }
 
-async function post_Js3c(data, user, cb) {
+async function post_Js3c(data, user) {
   var options = {
     method: "POST",
     url: conf1g.url.j_sec,
@@ -279,6 +279,11 @@ async function get_1n1t1al_JS3$_c$rf() {
 d0_da_g3t = async function(user) {
   let J$_C$ = await get_1n1t1al_JS3$_c$rf();
   let J_S3$$ion = await post_Js3c(J$_C$, user);
+
+  if (J_S3$$ion === null) {
+    return { err: "invalid user!", credit: "-" };
+  }
+
   let cur_w33k_time = await get_pan3lR0S3(J_S3$$ion);
   let w33k_info = await post_n3xtw33k(cur_w33k_time, user.self);
   let r3sp0ns3 = await post_r3s3rv3(w33k_info, user);

@@ -1,6 +1,9 @@
 const fs = require("fs");
 
 function __getJ_S3$$ion(r3s) {
+  if (r3s.headers["set-cookie"] === undefined) {
+    return null;
+  }
   return r3s.headers["set-cookie"][0].substring(0, 43);
 }
 

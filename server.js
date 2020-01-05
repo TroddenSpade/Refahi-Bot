@@ -86,7 +86,7 @@ const superWizard = new WizardScene(
       async res => {
         await ctx.reply(`Error : ${res.err}`);
         await ctx.reply(
-          `Need Help ? contact us:  [Parsa Samadnejad](tg://user?id=${process.env.SAM})`,
+          `Need Help ? contact us:  [Support](tg://user?id=${process.env.SAM})`,
           { parse_mode: "Markdown" }
         );
       }
@@ -131,7 +131,7 @@ const menu = new TelegrafInlineMenu(async ctx => {
   }
   return id == process.env.SAM
     ? `Hey Sam What's up ? ;)\n\n`
-    : `How can I help you, ${ctx.from.first_name}?\n\n\nNeed Help ? contact me:  [Parsa Sam](tg://user?id=${process.env.SAM})`;
+    : `How can I help you, ${ctx.from.first_name}?\n\n\nNeed Help ? contact us:  [Support](tg://user?id=${process.env.SAM})`;
 });
 
 menu.simpleButton("Sign Up for Weekly Reservation", "SIGN_IN", {
@@ -152,21 +152,26 @@ const aboutMenu = new TelegrafInlineMenu(
 );
 
 const help = new TelegrafInlineMenu(`
+Sign Up for Weekly reservation:
 ابتدا برای رزرو هفتگی ثبت نام کنید
 اطلاعات ورود به رفاهی را وارد کنید
 سپس وارد منو اصلی بات میشوید
 
+Reserve State:
 وضعیت رزرو به صورت دیفالت خاموش میباشد با روشن کردن آن هر هفته برای شما بر اساس اطلاعات داده شده غذا رزرو می شود
 
+Reserve Days:
 میتوانید روز هایی که میخواهید برای شما غذا سفارش داده شود را انتخاب کنید
 
+Food Priority:
 همچنین میتوانید لیست به روز شده غذا هارا ببینید و غذا هایی را که دوست ندارید را انتخاب کنید
 (بر اساس میزان عدم علاقه آن ها را اولویت بندی نمایید)
 
 در انتها نیز سلف خود را انتخاب کنید
 
+About Us:
 در قسمت درباره ما میتوانید نظرات و پیشنهادات خود را به ما برسانید و دونیت کنید :)
-این پروژه با صورت متن باز میباشد و میتوانید در آن مشارکت کنید
+این پروژه به صورت متن باز میباشد و میتوانید در آن مشارکت کنید
 `);
 
 foods.forEach((e, index) => {

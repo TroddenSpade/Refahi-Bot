@@ -105,7 +105,9 @@ const updateSelf = function(telId, self, sb, fb) {
 
 const callOn = function(cb) {
   User.find({ state: true }, function(err, res) {
-    cb(res.telId);
+    res.forEach(async function(user) {
+      cb(user.chatId);
+    });
   });
 };
 

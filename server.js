@@ -30,15 +30,15 @@ const foods = [
   "کوکو سیب زمینی",
   "لوبیا پلو",
   "چلوجوجه کباب",
-  "چلو کوکو سبزی",
+  "کوکو سبزی",
   "عدس پلو",
-  "دلمه فلفل یا دلمه بادمجان",
+  "دلمه",
   "زرشک پلو با مرغ",
   "چلوخورشت قیمه بادمجان",
   "ماکارونی",
   "چلو کباب کوبیده",
   "ته چین مرغ",
-  "خوراک شنیسل مرغ",
+  "شنیسل مرغ",
   "خوراک کشک بادمجان",
   "چلو خورشت قیمه سیب زمینی",
   "خوراک کوبیده مرغ",
@@ -331,7 +331,7 @@ bot.use(
 bot.launch();
 
 const reserve_cron = new CronJob(
-  "00 12 * * 4",
+  "00 12 * * 3",
   function() {
     reserve((chatId, res) => {
       if (res.err)
@@ -359,7 +359,7 @@ const reserve_cron = new CronJob(
 );
 
 const ready_cron = new CronJob(
-  "00 11 * * 4",
+  "00 11 * * 3",
   function() {
     callOn(chatId => {
       bot.telegram
@@ -378,23 +378,3 @@ const ready_cron = new CronJob(
 
 ready_cron.start();
 reserve_cron.start();
-
-reserve((chatId, res) => {
-  if (res.err)
-    bot.telegram.sendMessage(
-      chatId,
-      "Reserve Status :  " + res.err + "\nPress /start to Continue"
-    );
-  else
-    bot.telegram
-      .sendMessage(
-        chatId,
-        "Reserve Status :  " +
-          res.msg +
-          "\nCredit: " +
-          res.credit +
-          "\nPress /start to Continue"
-      )
-      .then()
-      .catch();
-});

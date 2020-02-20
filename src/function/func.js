@@ -22,7 +22,7 @@ function form_creator(first_i, last_i, data, user, timestamp) {
     let prior_index = first_i;
     let highest_prior = __getP(data[first_i].name, user.priority);
     for (let i = first_i + 1; i <= last_i; i++) {
-      if (highest_prior < __getP(data[i].name, user.priority)) {
+      if (highest_prior > __getP(data[i].name, user.priority)) {
         prior_index = i;
         highest_prior = __getP(data[i].name, user.priority);
       }
@@ -137,8 +137,6 @@ async function post_n3xtw33k(data, self) {
   };
 
   return await rq(options).then(body => {
-    __t0uchB0dy(body);
-
     return {
       weekStartDateTime: __get_start_w33k(body),
       weekStartDateTimeAjx: __get_start_Ajx(body),
@@ -185,10 +183,10 @@ async function post_n3xtw33k(data, self) {
 //   });
 // }
 
-async function get_pan3lR0S3(J_S3$$ion) {
+async function get_pan3lR0S3(J_S3$$ion, self) {
   var options = {
     method: "GET",
-    url: conf1g.url.pan3l_r0s3,
+    url: conf1g.url.pan3l_r0s3 + self,
     headers: {
       "cache-control": "no-cache",
       Cookie: J_S3$$ion,
@@ -201,6 +199,7 @@ async function get_pan3lR0S3(J_S3$$ion) {
   };
 
   return await rq(options).then(body => {
+    // __t0uchB0dy(body);
     return {
       weekStartDateTime: __get_start_w33k(body),
       weekStartDateTimeAjx: __get_start_Ajx(body),
@@ -284,7 +283,7 @@ d0_da_g3t = async function(user) {
     return { err: "invalid user!", credit: "-" };
   }
 
-  let cur_w33k_time = await get_pan3lR0S3(J_S3$$ion);
+  let cur_w33k_time = await get_pan3lR0S3(J_S3$$ion, user.self);
   let w33k_info = await post_n3xtw33k(cur_w33k_time, user.self);
   let r3sp0ns3 = await post_r3s3rv3(w33k_info, user);
 

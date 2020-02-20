@@ -25,38 +25,39 @@ const {
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const foods = [
-  "استانبولی",
-  "کباب ترکی",
-  "کوکو سیب زمینی",
-  "لوبیا پلو",
-  "چلوجوجه کباب",
-  "کوکو سبزی",
-  "عدس پلو",
-  "دلمه",
-  "زرشک پلو با مرغ",
-  "چلوخورشت قیمه بادمجان",
-  "ماکارونی",
-  "چلو کباب کوبیده",
-  "ته چین مرغ",
-  "شنیسل مرغ",
+  "بسته میوه",
   "خوراک کشک بادمجان",
-  "چلو خورشت قیمه سیب زمینی",
   "خوراک کوبیده مرغ",
-  "چلو جوجه چینی",
-  "زرشک پلو با مرغ ترش",
-  "باقالی پلو با مرغ",
   "خوراک ران مرغ",
-  "خوراک قارچ و مرغ",
-  "چلو خورشت قرمه سبزی",
-  "کتلت گوشت",
+  "خوراک کوبیده گوشت 2 سیخ",
   "خوراک فیله مرغ",
+  "خوراک قارچ و مرغ",
+  "چلوجوجه کباب",
+  "چلو خورشت قیمه سیب زمینی",
+  "چلوخورشت قیمه بادمجان",
+  "چلو کباب کوبیده",
+  "چلو جوجه چینی",
+  "چلو خورشت قرمه سبزی",
   "چلو کباب نگینی",
   "چلو خورشت کرفس",
-  "خوراک کوبیده گوشت 2 سیخ",
+  "باقالی پلو با مرغ",
+  "زرشک پلو با مرغ ترش",
+  "زرشک پلو با مرغ",
+  "شنیسل مرغ",
+  "ته چین مرغ",
   "سبزی پلو با ماهی",
-  "آلو اسفناج",
-  "عدسی",
+  "عدس پلو",
+  "لوبیا پلو",
+  "استانبولی",
   "فسنجان",
+  "آلو اسفناج",
+  "ماکارونی",
+  "کوکو سیب زمینی",
+  "کوکو سبزی",
+  "عدسی",
+  "دلمه",
+  "کتلت گوشت",
+  "کباب ترکی",
   "میرزا قاسمی"
 ];
 
@@ -141,7 +142,7 @@ menu.simpleButton("Sign Up for Weekly Reservation", "SIGN_IN", {
 
 const daysMenu = new TelegrafInlineMenu("Reserve Days");
 const pFood = new TelegrafInlineMenu(ctx => {
-  let str = "Food Priority (least-preferred) :\n";
+  let str = "Food Priority (Descending) :\n";
   ctx.scene.state.foods.forEach((e, index) => {
     str += index + 1 + ":  " + e + "\n";
   });
@@ -164,8 +165,8 @@ Reserve Days:
 میتوانید روز هایی که میخواهید برای شما غذا سفارش داده شود را انتخاب کنید
 
 Food Priority:
-همچنین میتوانید لیست به روز شده غذا هارا ببینید و غذا هایی را که دوست ندارید را انتخاب کنید
-(بر اساس میزان عدم علاقه آن ها را اولویت بندی نمایید)
+همچنین میتوانید لیست به روز شده غذا هارا ببینید و غذا هایی را که دوست دارید انتخاب کنید
+(بر اساس میزان علاقه آن ها را اولویت بندی نمایید)
 
 در انتها نیز سلف خود را انتخاب کنید
 
@@ -330,29 +331,31 @@ bot.use(
 );
 bot.launch();
 
+const res_func = function() {
+  reserve((chatId, res) => {
+    if (res.err)
+      bot.telegram.sendMessage(
+        chatId,
+        "Reserve Status :  " + res.err + "\nPress /start to Continue"
+      );
+    else
+      bot.telegram
+        .sendMessage(
+          chatId,
+          "Reserve Status :  " +
+            res.msg +
+            "\nCredit: " +
+            res.credit +
+            "\nPress /start to Continue"
+        )
+        .then()
+        .catch();
+  });
+};
+
 const reserve_cron = new CronJob(
   "00 12 * * 3",
-  function() {
-    reserve((chatId, res) => {
-      if (res.err)
-        bot.telegram.sendMessage(
-          chatId,
-          "Reserve Status :  " + res.err + "\nPress /start to Continue"
-        );
-      else
-        bot.telegram
-          .sendMessage(
-            chatId,
-            "Reserve Status :  " +
-              res.msg +
-              "\nCredit: " +
-              res.credit +
-              "\nPress /start to Continue"
-          )
-          .then()
-          .catch();
-    });
-  },
+  res_func,
   null,
   true,
   "Asia/Tehran"
@@ -376,5 +379,7 @@ const ready_cron = new CronJob(
   "Asia/Tehran"
 );
 
-ready_cron.start();
-reserve_cron.start();
+// ready_cron.start();
+// reserve_cron.start();
+
+// res_func();

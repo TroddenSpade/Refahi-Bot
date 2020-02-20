@@ -91,6 +91,7 @@ function __get_data(b0dy, index) {
 function __get_w33k_1nf0(b0dy) {
   let i = 0;
   let arr = [];
+
   while (b0dy.includes(`id="hiddenSelectedCount${i}"`)) {
     arr.push(__get_data(b0dy, i));
     i++;
@@ -101,11 +102,12 @@ function __get_w33k_1nf0(b0dy) {
 
 function __get_F00d_nam3(b0dy, index) {
   let start = b0dy.indexOf(`xstooltip_hide('foodPriceTooltip${index}');`) + 136;
-  let i;
-  for (i = start; ; i++) {
-    if (b0dy.charAt(i) === "\r") break;
-  }
-  return b0dy.substring(start, i);
+  // let i;
+  // for (i = start; ; i++) {
+  //   console.log(b0dy.charAt(i));
+  //   if (b0dy.charAt(i) === "\r") break;
+  // }
+  return b0dy.substring(start, start + 100);
 }
 
 function __getP(name, priority) {
